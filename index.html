@@ -1,6 +1,6 @@
 ﻿<html>
     <head>
-            <title> Pedir random </title>
+            <title> Calculator </title>
 
             <script type="text/javascript">
                 var operators = []; // stores operators
@@ -12,15 +12,20 @@
                     var sel1Index = document.getElementById("operation").selectedIndex;
                     var op = document.getElementById("operation").options[sel1Index].value;
 
+                    op = "+";
+                    console.log(op);
+
                     var xmlhttp = new XMLHttpRequest();
-                    xmlhttp.onreadystatechange = function () {
-                        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-                            console.log("inside the method");
-                            document.getElementById("result").value = xmlhttp.responseText;
-                        }
-                    };
-                    xmlhttp.open("GET", "http://localhost:8081" + "?number1=" + n1 + "&number2=" + n2 + "&operation=" + op, true);
-                    xmlhttp.send();
+
+                    xmlhttp.open("GET", "http://localhost:8081" + "?number1=" + n1 + "&number2=" + n2 + "&operation=" + encodeURIComponent(op), false);
+                    xmlhttp.send(null);
+                    document.getElementById("result").value = xmlhttp.responseText;
+                    //console.log(xmlhttp.responseText);
+                    //xmlhttp.onreadystatechange = function () {
+                    //    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                    //        document.getElementById("result").value = xmlhttp.responseText;
+                    //    }
+                    //};
                 }
 
                 function send(){
@@ -55,8 +60,18 @@
                             index++;
                         }
                     }
-                    function calculate(){
-
+                    calculate();
+                }
+                function calculate(){
+                    for	(i = 0; i <= operands.length; i++){
+                        var n1 = operands.shift();
+                        var n2 = operands.shift();
+                        var op = operators.shift();
+                        console.log(i);
+                        console.log(n1);
+                        console.log(op);
+                        console.log(n2);
+                        console.log("----------------");
                     }
                 }
             </script>
@@ -65,16 +80,16 @@
 
     <body>
             <h1>Insert the numbers </h1>
-            <form id="forma1"> 
-                <input type="text" id="num1"></input>
+            <form id="form1">
+                <input type="text" id="num1">
                 <select type="text" name="operation" id="operation">
                     <option val="+">+</option>
                     <option val="-">-</option>
                     <option val="*">*</option>
                     <option val="/">/</option>
                 </select>
-                <input type="text" id="num2"></input>
-                <input type="button" onClick="arrangeData()" id="submit" value="submit"></input>
+                <input type="text" id="num2">
+                <input type="button" onClick="toServer()" id="submit" value="submit">
                 <input type="text" name="result" id="result" value="">
             </form>
     </body>

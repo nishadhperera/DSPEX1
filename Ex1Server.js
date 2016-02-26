@@ -13,33 +13,35 @@ function subNumbers(numA, numB){
 }
 
 http.createServer(function(request, response){
-    //response.writeHead(200, {"Content-Type":"text/plain"});
+    response.writeHead(200, {"Content-Type":"text/plain", "Access-Control-Allow-Origin":"*"});
+    //console.log(request);
+
     var params = url.parse(request.url,true).query;
 
-    console.log(params);
-
+    //return "hello";
     var a = params.number1;
     var b = params.number2;
-    var op = params.operation;
+    var op = decodeURIComponent(params.operation);
 
+    console.log(params);
     var numA = new Number(a);
     var numB = new Number(b);
 
-    if (op=="+") {
-        addNumbers(numA, numB);
-//        var r = new Number(numA + numB);
+    if (op == "+") {
+        //addNumbers(numA, numB);
+        var r = new Number(numA + numB);
     }else if (op=="-") {
-        subNumbers(numA, numB);
-//        var r = new Number(numA - numB);
+//        subNumbers(numA, numB);
+        var r = new Number(numA - numB);
     }else if (op=="*") {
         var r = new Number(numA * numB);
     }else {
         var r = new Number(numA / numB);
     }
 
-    var res = numA+ " " +op+ " " +numB+ " = " +r;
-
-    response.write(res);
+    //var res = numA+ " " +op+ " " +numB+ " = " +r;
+    //return "hello";
+    response.write(String(r));
     response.end();
 }).listen(8081);
 
