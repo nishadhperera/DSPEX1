@@ -2,6 +2,7 @@
 var url = require("url");
 
 function addNumbers(numA, numB){
+    console.log(res);
     return res = numA + numB;
 }
 

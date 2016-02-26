@@ -3,7 +3,10 @@
             <title> Pedir random </title>
 
             <script type="text/javascript">
-                function loadXMLDoc() {
+                var operators = []; // stores operators
+                var operands = [];  // stores operands
+
+                function toServer() {
                     var n1 = document.getElementById("num1").value;
                     var n2 = document.getElementById("num2").value;
                     var sel1Index = document.getElementById("operation").selectedIndex;
@@ -12,7 +15,6 @@
                     var xmlhttp = new XMLHttpRequest();
                     xmlhttp.onreadystatechange = function () {
                         if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-
                             console.log("inside the method");
                             document.getElementById("result").value = xmlhttp.responseText;
                         }
@@ -29,6 +31,34 @@
 
                         location.href = "http://localhost:8081" + "?number1=" + n1 + "&number2=" + n2 + "&operation=" + op;
                 }
+
+                function arrangeData(){
+                    var data = document.getElementById("num1").value;
+                    var separators = [' ', '\\\+', '-', '\\\(', '\\\)', '\\*', '/', ':', '\\\?'];   // delimiters for parsing the input
+                    console.log(separators.join('|'));
+                    operands = data.split(new RegExp(separators.join('|'), 'g'));     // get the operands into an array
+
+                    var x = data.split("");
+                    var index = 0;
+                    for	(i = 0; i < x.length; i++) {
+                        if (x[i] == "+") {
+                            operators[index] = x[i];
+                            index++;
+                        } else if (x[i] == "-") {
+                            operators[index] = x[i];
+                            index++;
+                        } else if (x[i] == "*") {
+                            operators[index] = x[i];
+                            index++;
+                        } else if (x[i] == "/") {
+                            operators[index] = x[i];
+                            index++;
+                        }
+                    }
+                    function calculate(){
+
+                    }
+                }
             </script>
 
     </head>
@@ -44,7 +74,7 @@
                     <option val="/">/</option>
                 </select>
                 <input type="text" id="num2"></input>
-                <input type="button" onClick="loadXMLDoc()" id="submit" value="submit"></input>
+                <input type="button" onClick="arrangeData()" id="submit" value="submit"></input>
                 <input type="text" name="result" id="result" value="">
             </form>
     </body>
