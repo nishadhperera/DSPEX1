@@ -1,0 +1,52 @@
+﻿<html>
+    <head>
+            <title> Pedir random </title>
+
+            <script type="text/javascript">
+                function loadXMLDoc() {
+                    var n1 = document.getElementById("num1").value;
+                    var n2 = document.getElementById("num2").value;
+                    var sel1Index = document.getElementById("operation").selectedIndex;
+                    var op = document.getElementById("operation").options[sel1Index].value;
+
+                    var xmlhttp = new XMLHttpRequest();
+                    xmlhttp.onreadystatechange = function () {
+                        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+
+                            console.log("inside the method");
+                            document.getElementById("result").value = xmlhttp.responseText;
+                        }
+                    };
+                    xmlhttp.open("GET", "http://localhost:8081" + "?number1=" + n1 + "&number2=" + n2 + "&operation=" + op, true);
+                    xmlhttp.send();
+                }
+
+                function send(){
+                        var n1 = document.getElementById("num1").value;
+                        var n2 = document.getElementById("num2").value;
+                        var sel1Index = document.getElementById("operation").selectedIndex;
+                        var op = document.getElementById("operation").options[sel1Index].value;
+
+                        location.href = "http://localhost:8081" + "?number1=" + n1 + "&number2=" + n2 + "&operation=" + op;
+                }
+            </script>
+
+    </head>
+
+    <body>
+            <h1>Insert the numbers </h1>
+            <form id="forma1"> 
+                <input type="text" id="num1"></input>
+                <select type="text" name="operation" id="operation">
+                    <option val="+">+</option>
+                    <option val="-">-</option>
+                    <option val="*">*</option>
+                    <option val="/">/</option>
+                </select>
+                <input type="text" id="num2"></input>
+                <input type="button" onClick="loadXMLDoc()" id="submit" value="submit"></input>
+                <input type="text" name="result" id="result" value="">
+            </form>
+    </body>
+
+<html>

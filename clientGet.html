@@ -1,0 +1,41 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+
+<p> Calculator </p>
+
+<script>
+    function loadXMLDoc() {
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.onreadystatechange = function() {
+            if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                document.getElementById("result").value = xmlhttp.sendRes();
+                console.log("inside the method");
+            }
+        };
+        xmlhttp.open("GET", "http://localhost:8081" + "?number1=" + n1 + "&number2=" + n2 + "&operation=" + op, true);
+        xmlhttp.send();
+    }
+</script>
+
+</head>
+
+<body>
+
+    <input type="text" name="number1">
+    <select type="text" name="operation">
+        <option val="+">+</option>
+        <option val="-">-</option>
+        <option val="*">*</option>
+        <option val="/">/</option>
+    </select>
+    <input type="text" name="number2"><br>
+    <button type="button" onclick="loadXMLDoc()"> submit </button>
+    <!--<input type="submit" value="Submit" onclick="loadXMLDoc()"><br>-->
+    <input type="text" name="result" id="result" value="">
+
+
+</body>
+
+</html>
