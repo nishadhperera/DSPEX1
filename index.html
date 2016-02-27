@@ -12,12 +12,9 @@
                     var sel1Index = document.getElementById("operation").selectedIndex;
                     var op = document.getElementById("operation").options[sel1Index].value;
 
-                    op = "+";
-                    console.log(op);
-
                     var xmlhttp = new XMLHttpRequest();
 
-                    xmlhttp.open("GET", "http://localhost:8081" + "?number1=" + n1 + "&number2=" + n2 + "&operation=" + encodeURIComponent(op), false);
+                    xmlhttp.open("GET", "http://localhost:8081" + "?arg1=" + encodeURIComponent(n1) + "&arg2=" + encodeURIComponent(n2) + "&op=" + encodeURIComponent(op), false);
                     xmlhttp.send(null);
                     document.getElementById("result").value = xmlhttp.responseText;
                     //console.log(xmlhttp.responseText);
@@ -79,8 +76,9 @@
     </head>
 
     <body>
-            <h1>Insert the numbers </h1>
+            <h1> Server based Calculator </h1>
             <form id="form1">
+                <p> Input </p>
                 <input type="text" id="num1">
                 <select type="text" name="operation" id="operation">
                     <option val="+">+</option>
@@ -89,7 +87,8 @@
                     <option val="/">/</option>
                 </select>
                 <input type="text" id="num2">
-                <input type="button" onClick="toServer()" id="submit" value="submit">
+                <input type="button" onClick="toServer()" id="submit" value="submit"><br>
+                <p> Result </p>
                 <input type="text" name="result" id="result" value="">
             </form>
     </body>

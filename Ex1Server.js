@@ -1,37 +1,23 @@
 ﻿var http = require("http");
 var url = require("url");
 
-function addNumbers(numA, numB){
-    console.log(res);
-    return res = numA + numB;
-}
-
-function subNumbers(numA, numB){
-    var res = numA - numB;
-    console.log(res);
-    return res;
-}
 
 http.createServer(function(request, response){
     response.writeHead(200, {"Content-Type":"text/plain", "Access-Control-Allow-Origin":"*"});
-    //console.log(request);
 
     var params = url.parse(request.url,true).query;
 
-    //return "hello";
-    var a = params.number1;
-    var b = params.number2;
-    var op = decodeURIComponent(params.operation);
+    var a = decodeURIComponent(params.arg1);
+    var b = decodeURIComponent(params.arg2);
+    var op = decodeURIComponent(params.op);
 
     console.log(params);
     var numA = new Number(a);
     var numB = new Number(b);
 
     if (op == "+") {
-        //addNumbers(numA, numB);
         var r = new Number(numA + numB);
     }else if (op=="-") {
-//        subNumbers(numA, numB);
         var r = new Number(numA - numB);
     }else if (op=="*") {
         var r = new Number(numA * numB);
@@ -39,8 +25,6 @@ http.createServer(function(request, response){
         var r = new Number(numA / numB);
     }
 
-    //var res = numA+ " " +op+ " " +numB+ " = " +r;
-    //return "hello";
     response.write(String(r));
     response.end();
 }).listen(8081);

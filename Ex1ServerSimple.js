@@ -1,13 +1,9 @@
 ﻿var http = require("http");
 var url = require("url");
 
-function send(){
-    return res;
-}
-
 
 http.createServer(function(request, response){
-    response.writeHead(200, {"Content-Type":"text/plain"});
+    response.writeHead(200, {"Content-Type":"text/plain", "Access-Control-Allow-Origin":"*"});
     var params = url.parse(request.url,true).query;
 
     console.log(params);
