@@ -15,7 +15,7 @@
                 -webkit-border-radius: 9;
                 -moz-border-radius: 9;
                 border-radius: 9px;
-                font-family: Arial;
+                font-family: Arial, Helvetica, sans-serif;
                 color: #ffffff;
                 font-size: 12px;
                 padding: 6px 12px 6px 13px;
@@ -29,6 +29,12 @@
             label{
                 display:inline-block;
                 width:100px;
+                font-family: Arial, Helvetica, sans-serif;
+                font-size: 14px;
+            }
+            H1{
+                font-family: Arial, Helvetica, sans-serif;
+                font-size: 35px;
             }
         </style>
     </head>
@@ -41,7 +47,7 @@
                 <input type="button" class="btn"onClick="arrangeData()" id="simplify" value="Simplify">
                 <input type="text" id="cacheVal">
                 <input type="button" class="btn" id="setCache" value="Set Cache" onclick="cacheLimit()"><br>
-                <label>Result:</label><input type="text" name="result" id="result" value="" disabled><br>
+                <label class="abcd">Result:</label><input type="text" name="result" id="result" value="" disabled><br>
                 <p id="calculationSteps" value=""> </p>
                 <p id="history" value="">  </p>
             </form>
