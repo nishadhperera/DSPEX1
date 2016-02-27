@@ -9,6 +9,7 @@
                 var cachedResults = [];
                 var calSteps;
                 var cacheSize;
+                var msgsToServer;
 
                 function toServer(n1, n2, op) {
                     var xmlhttp = new XMLHttpRequest();
@@ -19,6 +20,7 @@
                 }
 
                 function arrangeData(){
+                    msgsToServer = 0;
                     result = 0;
                     operators = [];
                     operands = [];
@@ -45,8 +47,8 @@
                             index++;
                         }
                     }
-                    console.log("Operands: "+operands.toString());
-                    console.log("Operators: "+operators.toString());
+                    //console.log("Operands: "+operands.toString());
+                    //console.log("Operators: "+operators.toString());
                     calculate();
                 }
                 function calculate(){
@@ -55,23 +57,30 @@
                         var n1 = operands.shift();
                         var n2 = operands.shift();
                         var op = operators.shift();
-                        console.log(counter);
-                        console.log(n1);
-                        console.log(op);
-                        console.log(n2);
-                        console.log("----------------");
-                        result = toServer(n1, n2, op);
-                        console.log("cached:data: "+n1 + op + n2 + "=" + result);
+                        //console.log(counter);
+                        //console.log(n1);
+                        //console.log(op);
+                        //console.log(n2);
+                        //console.log("----------------");
+                        var simplified = simplify(n1, n2, op);
+                        console.log("Simplified = "+simplified);
+                        if(!simplified){
+                            result = toServer(n1, n2, op);
+                            msgsToServer++;
+                        }
+                        //console.log("cached data: "+n1 + op + n2 + "=" + result);
                         cachedResults.unshift(n1 + op + n2 + "=" + result);    // storing results in cache
                         calSteps.push(n1 + op + n2 + "=" + result);         // storing results in calculation steps
                         operands.unshift(result);
-                        console.log("Operands.size: "+operands.length);
+                        //console.log("Operands.size: "+operands.length);
                         cachedResults = cachedResults.splice(0,cacheSize);  // limiting the cache size to the defines value
-                        console.log("cache size: "+cachedResults.length);
+                        //console.log("cache size: "+cachedResults.length);
                     }
                     document.getElementById("result").value = result;
                     printData("calculationSteps","Calculation steps :",calSteps);
                     printData("history","Cached Results :",cachedResults);
+                    console.log("Cache size: "+cacheSize);
+                    console.log("Messages to Server: "+msgsToServer);
                 }
 
                 function printData(ElementID, InitialText, arr){
@@ -89,6 +98,34 @@
                             document.getElementById(ElementID).appendChild(node);
                         }
                     }
+                }
+
+                function simplify(n1, n2, op){
+                    //console.log("------ Simplification Called ------");
+                    var simplified = false;
+                    var order12 = n1+op+n2;
+                    var order21 = n2+op+n1;
+                    //console.log("order12 = "+n1+op+n2);
+                    //console.log("order21 = "+n2+op+n1);
+                    for	(i = 0; i < cachedResults.length; i++){
+                        //console.log("Inside simplifying loop: "+cachedResults[i]);
+                        var str = cachedResults[i].split("=")
+                        if (order12 == str[0]){
+                            result = str[1];
+                            //console.log("Matched: "+order12+" & "+str[0]);
+                            simplified = true;
+                            break;
+                        }else if(order21 == str[0]){
+                            result = str[1];
+                            //console.log("Matched: "+order21+" & "+str[0]);
+                            simplified = true;
+                            break;
+                        }else{
+                            simplified = false;
+                            //console.log("Not simplifiable");
+                        }
+                    }
+                    return simplified;
                 }
 
                 function cacheLimit(){
