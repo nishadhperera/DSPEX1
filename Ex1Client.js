@@ -9,6 +9,7 @@ var cachedResults = []; // stores cached results
 var calSteps;   // stores steps of calculation
 var cacheSize;  // stores cache size
 var msgsToServer;   // stores the count of messages sent to server
+var simplifyOnce = false;
 
 function toServer(n1, n2, op) {
     var xmlhttp = new XMLHttpRequest();
@@ -46,9 +47,9 @@ function arrangeData(){
             index++;
         }
     }
-    //console.log("Operands: "+operands.toString());
-    //console.log("Operators: "+operators.toString());
-    calculate();
+    if(!simplifyOnce){
+        calculate();
+    }
 }
 function calculate(){
     var counter = 0;
@@ -56,24 +57,16 @@ function calculate(){
         var n1 = operands.shift();
         var n2 = operands.shift();
         var op = operators.shift();
-        //console.log(counter);
-        //console.log(n1);
-        //console.log(op);
-        //console.log(n2);
-        //console.log("----------------");
         var simplified = simplify(n1, n2, op);
         console.log("Simplified = "+simplified);
         if(!simplified){
             result = toServer(n1, n2, op);
             msgsToServer++;
         }
-        //console.log("cached data: "+n1 + op + n2 + "=" + result);
         cachedResults.unshift(n1 + op + n2 + "=" + result);    // storing results in cache
         calSteps.push(n1 + op + n2 + "=" + result);         // storing results in calculation steps
         operands.unshift(result);
-        //console.log("Operands.size: "+operands.length);
         cachedResults = cachedResults.splice(0,cacheSize);  // limiting the cache size to the defines value
-        //console.log("cache size: "+cachedResults.length);
     }
     document.getElementById("result").value = result;
     printData("calculationSteps","Calculation steps :",calSteps);
@@ -100,31 +93,84 @@ function printData(ElementID, InitialText, arr){
 }
 
 function simplify(n1, n2, op){
-    //console.log("------ Simplification Called ------");
     var simplified = false;
     var order12 = n1+op+n2;
     var order21 = n2+op+n1;
-    //console.log("order12 = "+n1+op+n2);
-    //console.log("order21 = "+n2+op+n1);
     for	(i = 0; i < cachedResults.length; i++){
-        //console.log("Inside simplifying loop: "+cachedResults[i]);
         var str = cachedResults[i].split("=")
         if (order12 == str[0]){
             result = str[1];
-            //console.log("Matched: "+order12+" & "+str[0]);
             simplified = true;
             break;
         }else if(order21 == str[0] && (op == "+" || op == "*")){
             result = str[1];
-            //console.log("Matched: "+order21+" & "+str[0]);
             simplified = true;
             break;
         }else{
             simplified = false;
-            //console.log("Not simplifiable");
         }
     }
     return simplified;
+}
+
+function doSimplifyOnce(){
+    simplifyOnce = true;
+    var simplifiedOnce = false;
+    arrangeData();
+
+    for (j = 0; j < operands.length; j++){
+        var n1 = operands[j];
+        var n2 = operands[j+1];
+        var op = operators[j];
+
+        var order12 = n1+op+n2;
+        var order21 = n2+op+n1;
+        console.log("order12 = "+n1+op+n2);
+        console.log("order21 = "+n2+op+n1);
+
+        for	(i = 0; i < cachedResults.length; i++){
+            var str = cachedResults[i].split("=");
+            if (order12 == str[0]){
+                operands[j] = str[1];
+                delete operands[j+1];
+                delete operators[j];
+                console.log("operands: "+operands);
+                console.log("operators: "+operators);
+                console.log("Matched: "+order12+" & "+str[0]);
+                simplifiedOnce = true;
+                rearrange(operands, operators);
+                return;
+            }else if(order21 == str[0] && (op == "+" || op == "*")){
+                operands[j] = str[1];
+                delete operands[j+1];
+                delete operators[j];
+                console.log("operands: "+operands);
+                console.log("operators: "+operators);
+                console.log("Matched: "+order21+" & "+str[0]);
+                simplifiedOnce = true;
+                rearrange(operands, operators);
+                return;
+            }else{
+                simplifiedOnce = false;
+                console.log("Not simplifiable");
+            }
+        }
+    }
+}
+
+function rearrange(arrData, arrOp){
+    arrData = arrData.filter(function(n){ return n != undefined });
+    arrOp = arrOp.filter(function(n){ return n != undefined });
+    var modified = arrData.shift();
+    for	(i = 0; i < arrOp.length; i++){
+        x = arrOp.shift();
+        modified = modified + ""+x;
+        y = arrData.shift();
+        modified = modified + ""+y;
+    }
+    console.log("Modified statement: "+modified);
+    simplifyOnce = false;
+    document.getElementById("input").value = modified;
 }
 
 function cacheLimit(){
