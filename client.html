@@ -3,41 +3,34 @@
             <title> Calculator </title>
 
             <script type="text/javascript">
-                var operators = []; // stores operators
-                var operands = [];  // stores operands
+                var operators; // stores operators
+                var operands;  // stores operands
+                var result;
+                var cachedResults = [];
 
-                function toServer() {
-                    var n1 = document.getElementById("num1").value;
-                    var n2 = document.getElementById("num2").value;
-                    var sel1Index = document.getElementById("operation").selectedIndex;
-                    var op = document.getElementById("operation").options[sel1Index].value;
-
+                function toServer(n1, n2, op) {
                     var xmlhttp = new XMLHttpRequest();
-
                     xmlhttp.open("GET", "http://localhost:8081" + "?arg1=" + encodeURIComponent(n1) + "&arg2=" + encodeURIComponent(n2) + "&op=" + encodeURIComponent(op), false);
                     xmlhttp.send(null);
-                    document.getElementById("result").value = xmlhttp.responseText;
-                    //console.log(xmlhttp.responseText);
-                    //xmlhttp.onreadystatechange = function () {
-                    //    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-                    //        document.getElementById("result").value = xmlhttp.responseText;
-                    //    }
-                    //};
-                }
-
-                function send(){
-                        var n1 = document.getElementById("num1").value;
-                        var n2 = document.getElementById("num2").value;
-                        var sel1Index = document.getElementById("operation").selectedIndex;
-                        var op = document.getElementById("operation").options[sel1Index].value;
-
-                        location.href = "http://localhost:8081" + "?number1=" + n1 + "&number2=" + n2 + "&operation=" + op;
+                    var fromServer =  xmlhttp.responseText;
+                    return fromServer;
                 }
 
                 function arrangeData(){
+                    result = 0;
+                    operators = [];
+                    operands = [];
+
+                    /*while(operands.length > 0) {
+                        operands.pop();
+                        console.log("popped out");
+                    }
+                    while(operators.length > 0) {
+                        operators.pop();
+                        console.log("popped out");
+                    }*/
                     var data = document.getElementById("num1").value;
                     var separators = [' ', '\\\+', '-', '\\\(', '\\\)', '\\*', '/', ':', '\\\?'];   // delimiters for parsing the input
-                    console.log(separators.join('|'));
                     operands = data.split(new RegExp(separators.join('|'), 'g'));     // get the operands into an array
 
                     var x = data.split("");
@@ -60,7 +53,7 @@
                     calculate();
                 }
                 function calculate(){
-                    for	(i = 0; i <= operands.length; i++){
+                    for	(i = 0; i < operands.length; i++){
                         var n1 = operands.shift();
                         var n2 = operands.shift();
                         var op = operators.shift();
@@ -69,8 +62,29 @@
                         console.log(op);
                         console.log(n2);
                         console.log("----------------");
+                        result = toServer(n1, n2, op);
+                        cachedResults.push(n1 + op + n2 + "=" + result);
+                        operands.unshift(result);
+                    }
+                    document.getElementById("result").value = result;
+
+                    var node = document.createElement("P");
+                    var textnode = document.createTextNode("Calculation steps :");
+                    node.appendChild(textnode);
+                    document.getElementById("history").appendChild(node);
+
+                    for	(i = 0; i < cachedResults.length; i++){
+                        var node = document.createElement("LI");
+                        var textnode = document.createTextNode(""+cachedResults[i]);
+                        node.appendChild(textnode);
+                        document.getElementById("history").appendChild(node);
                     }
                 }
+
+                function cacheLimit(n){
+                    cachedResults.length = n;
+                }
+
             </script>
 
     </head>
@@ -87,9 +101,10 @@
                     <option val="/">/</option>
                 </select>
                 <input type="text" id="num2">
-                <input type="button" onClick="toServer()" id="submit" value="submit"><br>
+                <input type="button" onClick="arrangeData()" id="submit" value="submit"><br>
                 <p> Result </p>
-                <input type="text" name="result" id="result" value="">
+                <input type="text" name="result" id="result" value=""><br><br><br>
+                <p id="history" value="">  </p>
             </form>
     </body>
 
