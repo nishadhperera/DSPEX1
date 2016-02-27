@@ -7,6 +7,8 @@
                 var operands;  // stores operands
                 var result;
                 var cachedResults = [];
+                var calSteps;
+                var cacheSize;
 
                 function toServer(n1, n2, op) {
                     var xmlhttp = new XMLHttpRequest();
@@ -20,16 +22,9 @@
                     result = 0;
                     operators = [];
                     operands = [];
+                    calSteps = [];
 
-                    /*while(operands.length > 0) {
-                        operands.pop();
-                        console.log("popped out");
-                    }
-                    while(operators.length > 0) {
-                        operators.pop();
-                        console.log("popped out");
-                    }*/
-                    var data = document.getElementById("num1").value;
+                    var data = document.getElementById("input").value;
                     var separators = [' ', '\\\+', '-', '\\\(', '\\\)', '\\*', '/', ':', '\\\?'];   // delimiters for parsing the input
                     operands = data.split(new RegExp(separators.join('|'), 'g'));     // get the operands into an array
 
@@ -50,39 +45,55 @@
                             index++;
                         }
                     }
+                    console.log("Operands: "+operands.toString());
+                    console.log("Operators: "+operators.toString());
                     calculate();
                 }
                 function calculate(){
-                    for	(i = 0; i < operands.length; i++){
+                    var counter = 0;
+                    while(operands.length > 1){
                         var n1 = operands.shift();
                         var n2 = operands.shift();
                         var op = operators.shift();
-                        console.log(i);
+                        console.log(counter);
                         console.log(n1);
                         console.log(op);
                         console.log(n2);
                         console.log("----------------");
                         result = toServer(n1, n2, op);
-                        cachedResults.push(n1 + op + n2 + "=" + result);
+                        console.log("cached:data: "+n1 + op + n2 + "=" + result);
+                        cachedResults.unshift(n1 + op + n2 + "=" + result);    // storing results in cache
+                        calSteps.push(n1 + op + n2 + "=" + result);         // storing results in calculation steps
                         operands.unshift(result);
+                        console.log("Operands.size: "+operands.length);
+                        cachedResults = cachedResults.splice(0,cacheSize);  // limiting the cache size to the defines value
+                        console.log("cache size: "+cachedResults.length);
                     }
                     document.getElementById("result").value = result;
+                    printData("calculationSteps","Calculation steps :",calSteps);
+                    printData("history","Cached Results :",cachedResults);
+                }
 
+                function printData(ElementID, InitialText, arr){
+                    document.getElementById(ElementID).innerHTML = "";
                     var node = document.createElement("P");
-                    var textnode = document.createTextNode("Calculation steps :");
+                    var textnode = document.createTextNode(InitialText);
                     node.appendChild(textnode);
-                    document.getElementById("history").appendChild(node);
+                    document.getElementById(ElementID).appendChild(node);
 
-                    for	(i = 0; i < cachedResults.length; i++){
-                        var node = document.createElement("LI");
-                        var textnode = document.createTextNode(""+cachedResults[i]);
-                        node.appendChild(textnode);
-                        document.getElementById("history").appendChild(node);
+                    for	(i = 0; i < arr.length; i++){
+                        if(arr[i] != null) {
+                            var node = document.createElement("P");
+                            var textnode = document.createTextNode("" + arr[i]);
+                            node.appendChild(textnode);
+                            document.getElementById(ElementID).appendChild(node);
+                        }
                     }
                 }
 
-                function cacheLimit(n){
-                    cachedResults.length = n;
+                function cacheLimit(){
+                    cacheSize = new Number(document.getElementById("cacheVal").value);
+                    console.log("Cache size: "+cacheSize);
                 }
 
             </script>
@@ -92,18 +103,13 @@
     <body>
             <h1> Server based Calculator </h1>
             <form id="form1">
-                <p> Input </p>
-                <input type="text" id="num1">
-                <select type="text" name="operation" id="operation">
-                    <option val="+">+</option>
-                    <option val="-">-</option>
-                    <option val="*">*</option>
-                    <option val="/">/</option>
-                </select>
-                <input type="text" id="num2">
-                <input type="button" onClick="arrangeData()" id="submit" value="submit"><br>
-                <p> Result </p>
-                <input type="text" name="result" id="result" value=""><br><br><br>
+                Input:<input type="text" id="input">
+                <input type="button" onClick="arrangeData()" id="submit" value="Submit">
+                <input type="button" onClick="arrangeData()" id="simplify" value="Simplify">
+                <input type="text" id="cacheVal">
+                <input type="button" id="setCache" value="Set Cache" onclick="cacheLimit()"><br>
+                Result:<input type="text" name="result" id="result" value="" disabled><br>
+                <p id="calculationSteps" value=""> </p>
                 <p id="history" value="">  </p>
             </form>
     </body>
