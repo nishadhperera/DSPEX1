@@ -3,20 +3,45 @@
 <html>
     <head>
         <title> Calculator </title>
-
         <script src="Ex1Client.js" charset="utf-8"></script>
-
+        <style>
+            .btn {
+                background: #d6e1e8;
+                background-image: -webkit-linear-gradient(top, #d6e1e8, #abb3b8);
+                background-image: -moz-linear-gradient(top, #d6e1e8, #abb3b8);
+                background-image: -ms-linear-gradient(top, #d6e1e8, #abb3b8);
+                background-image: -o-linear-gradient(top, #d6e1e8, #abb3b8);
+                background-image: linear-gradient(to bottom, #d6e1e8, #abb3b8);
+                -webkit-border-radius: 9;
+                -moz-border-radius: 9;
+                border-radius: 9px;
+                font-family: Arial;
+                color: #ffffff;
+                font-size: 12px;
+                padding: 6px 12px 6px 13px;
+                text-decoration: none;
+            }
+            .inp input[type="text"] {
+                padding: 10px;
+                border: solid 1px #dcdcdc;
+                transition: box-shadow 0.3s, border 0.3s;
+            }
+            label{
+                display:inline-block;
+                width:100px;
+            }
+        </style>
     </head>
 
     <body>
             <h1> Server based Calculator </h1>
             <form id="form1">
-                Input:<input type="text" id="input">
-                <input type="button" onClick="arrangeData()" id="submit" value="Submit">
-                <input type="button" onClick="arrangeData()" id="simplify" value="Simplify">
+                <label>Input:</label><input type="text" id="input">
+                <input type="button" class="btn" onClick="arrangeData()" id="submit" value="Submit">
+                <input type="button" class="btn"onClick="arrangeData()" id="simplify" value="Simplify">
                 <input type="text" id="cacheVal">
-                <input type="button" id="setCache" value="Set Cache" onclick="cacheLimit()"><br>
-                Result:<input type="text" name="result" id="result" value="" disabled><br>
+                <input type="button" class="btn" id="setCache" value="Set Cache" onclick="cacheLimit()"><br>
+                <label>Result:</label><input type="text" name="result" id="result" value="" disabled><br>
                 <p id="calculationSteps" value=""> </p>
                 <p id="history" value="">  </p>
             </form>
